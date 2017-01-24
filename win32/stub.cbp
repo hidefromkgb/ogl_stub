@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
+	<Project>
+		<Option title="stub (win32)" />
+		<Option makefile_is_custom="1" />
+		<Option execution_dir="." />
+		<Option compiler="gcc" />
+		<Option virtualFolders="src/;src/core/;src/core/ogl_load/;src/core/vec_math/;" />
+		<Build>
+			<Target title="Release">
+				<Option output="../stub" prefix_auto="1" extension_auto="1" />
+				<Option object_output=".obj/" />
+				<Option working_dir=".." />
+				<Option type="0" />
+				<Option compiler="gcc" />
+			</Target>
+			<Target title="Debug">
+				<Option output="../stub" prefix_auto="1" extension_auto="1" />
+				<Option object_output=".obj/" />
+				<Option working_dir=".." />
+				<Option type="1" />
+				<Option compiler="gcc" />
+			</Target>
+		</Build>
+		<Unit filename="../core/core.c">
+			<Option compilerVar="CC" />
+			<Option virtualFolder="src/core/" />
+		</Unit>
+		<Unit filename="../core/core.h">
+			<Option virtualFolder="src/core/" />
+		</Unit>
+		<Unit filename="../core/ogl_load/ogl_load.h">
+			<Option virtualFolder="src/core/ogl_load/" />
+		</Unit>
+		<Unit filename="../core/vec_math/vec_math.h">
+			<Option virtualFolder="src/core/vec_math/" />
+		</Unit>
+		<Unit filename="Makefile">
+			<Option virtualFolder="src/" />
+		</Unit>
+		<Unit filename="main.c">
+			<Option compilerVar="CC" />
+			<Option virtualFolder="src/" />
+		</Unit>
+		<Unit filename="rsrc/rsrc.rc">
+			<Option compilerVar="WINDRES" />
+			<Option virtualFolder="src/" />
+		</Unit>
+		<Extensions>
+			<code_completion />
+			<envvars />
+			<debugger />
+		</Extensions>
+	</Project>
+</CodeBlocks_project_file>

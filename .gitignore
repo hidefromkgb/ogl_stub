@@ -1,0 +1,22 @@
+# Binaries
+stub.exe
+stub-gtk
+stub.app
+*.dll
+*.so
+*.dylib
+
+# Code::Blocks service files
+*.cscope_file_list
+*.layout
+*.depend
+.obj
+
+# Win32-specific
+Thumbs.db
+*.def
+*.a
+
+# MacOS-specific
+.DS_Store
+__MACOSX
