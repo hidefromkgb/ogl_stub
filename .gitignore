@@ -1,0 +1,4 @@
+# Ignore everything except the main header and its readme
+*
+!vec_math.h
+!README.md
