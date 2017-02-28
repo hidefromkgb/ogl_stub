@@ -87,7 +87,7 @@ void MAC_Handler(OnKeys, NSEvent *ekey) {
     cKbdInput(engc, keys[keyCode(ekey) & 0xFF], !!(type(ekey) == NSKeyDown));
 }
 
-void OnInvalidate(CFRunLoopTimerRef tmrp, void *user) {
+void OnRedraw(CFRunLoopObserverRef runp, CFRunLoopActivity acti, void *user) {
     setNeedsDisplay_((NSView*)user, true);
 }
 
@@ -124,7 +124,8 @@ void OnUpdate(CFRunLoopTimerRef tmrp, void *user) {
 
 int main(int argc, char *argv[]) {
     GLint attr[] = {NSOpenGLPFADoubleBuffer, NSOpenGLPFADepthSize, 32, 0};
-    CFRunLoopTimerRef tmru, tmri;
+    CFRunLoopTimerRef tupd;
+    CFRunLoopObserverRef idrw;
     NSOpenGLPixelFormat *pfmt;
     NSAutoreleasePool *pool;
     NSApplication *thrd;
@@ -171,11 +172,11 @@ int main(int argc, char *argv[]) {
     orderFront_(data.mwnd, thrd);
 
     OnSize(data.view, 0);
-    tmru = MAC_MakeTimer(DEF_UTMR, OnUpdate, &data);
-    tmri = MAC_MakeTimer(1, OnInvalidate, data.view);
+    tupd = MAC_MakeTimer(DEF_UTMR, OnUpdate, &data);
+    idrw = MAC_MakeIdleFunc(OnRedraw, data.view);
     run(thrd);
-    MAC_FreeTimer(tmru);
-    MAC_FreeTimer(tmri);
+    MAC_FreeTimer(tupd);
+    MAC_FreeIdleFunc(idrw);
     cFreeEngine(&data.engc);
 
     release(pool);
