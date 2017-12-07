@@ -11,7 +11,7 @@
 
 
 HRESULT APIENTRY WindowProc(HWND hWnd, UINT uMsg, WPARAM wPrm, LPARAM lPrm) {
-    static uint8_t keys[256] = {
+    static const uint8_t keys[256] = {
         KEY_NONE      , KEY_LMB       , KEY_RMB       , KEY_NONE      ,
         KEY_MMB       , KEY_NONE      , KEY_NONE      , KEY_NONE      ,
         KEY_BACKSPACE , KEY_TAB       , KEY_NONE      , KEY_NONE      ,

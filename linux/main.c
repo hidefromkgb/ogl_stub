@@ -1,3 +1,4 @@
+#include <stdlib.h>
 #include <gtk/gtk.h>
 #include <gtk/gtkgl.h>
 
@@ -13,9 +14,8 @@ typedef struct {
 static inline GdkGLDrawable *gtk_widget_gl_begin(GtkWidget *gwnd) {
     GdkGLDrawable *pGLD = gtk_widget_get_gl_drawable(gwnd);
 
-    if (!gdk_gl_drawable_gl_begin(pGLD, gtk_widget_get_gl_context(gwnd)))
-        return 0;
-    return pGLD;
+    return (gdk_gl_drawable_gl_begin(pGLD, gtk_widget_get_gl_context(gwnd)))?
+            pGLD : 0;
 }
 
 
@@ -29,11 +29,9 @@ gboolean DrawFunc(gpointer user) {
 
 
 gboolean UpdateFunc(gpointer user) {
-    DATA *data = (DATA*)user;
-    GdkGLDrawable *pGLD;
+    GdkGLDrawable *pGLD = gtk_widget_gl_begin(((DATA*)user)->gwnd);
 
-    pGLD = gtk_widget_gl_begin(data->gwnd);
-    cUpdateState(data->engc);
+    cUpdateState(((DATA*)user)->engc);
     gdk_gl_drawable_gl_end(pGLD);
     return TRUE;
 }
@@ -70,7 +68,7 @@ gboolean OnMousePress(GtkWidget *gwnd, GdkEventButton *ebtn, gpointer user) {
 
 
 gboolean OnKeyPress(GtkWidget *gwnd, GdkEventKey *ekey, gpointer user) {
-    static uint8_t keys[256] = {
+    static const uint8_t keys[256] = {
         KEY_NONE      , KEY_NONE      , KEY_NONE      , KEY_NONE      ,
         KEY_NONE      , KEY_NONE      , KEY_NONE      , KEY_NONE      ,
         KEY_NONE      , KEY_ESC       , KEY_1         , KEY_2         ,
@@ -124,9 +122,8 @@ gboolean OnChange(GtkWidget *gwnd, GdkScreen *scrn, gpointer user) {
 
 
 gboolean OnResize(GtkWidget *gwnd, GdkEventConfigure *ecnf, gpointer user) {
-    GdkGLDrawable *pGLD;
+    GdkGLDrawable *pGLD = gtk_widget_gl_begin(gwnd);
 
-    pGLD = gtk_widget_gl_begin(gwnd);
     cResizeWindow(*(ENGC**)user, ecnf->width, ecnf->height);
     gdk_gl_drawable_gl_end(pGLD);
     return FALSE;
@@ -135,9 +132,8 @@ gboolean OnResize(GtkWidget *gwnd, GdkEventConfigure *ecnf, gpointer user) {
 
 
 gboolean OnRedraw(GtkWidget *gwnd, GdkEventExpose *eexp, gpointer user) {
-    GdkGLDrawable *pGLD;
+    GdkGLDrawable *pGLD = gtk_widget_gl_begin(gwnd);
 
-    pGLD = gtk_widget_gl_begin(gwnd);
     cRedrawWindow(*(ENGC**)user);
     gdk_gl_drawable_swap_buffers(pGLD);
     gdk_gl_drawable_gl_end(pGLD);
@@ -147,6 +143,12 @@ gboolean OnRedraw(GtkWidget *gwnd, GdkEventExpose *eexp, gpointer user) {
 
 
 int main(int argc, char *argv[]) {
+    const void *func[] = {
+        "key-press-event",      OnKeyPress,   "configure-event", OnResize,
+        "key-release-event",    OnKeyPress,   "screen-changed",  OnChange,
+        "button-press-event",   OnMousePress, "delete-event",    OnDestroy,
+        "button-release-event", OnMousePress, "expose-event",    OnRedraw,
+        "motion-notify-event",  OnMouseMove};
     GdkGLDrawable *pGLD;
     guint tmru, tmrd;
     DATA data = {};
@@ -156,24 +158,9 @@ int main(int argc, char *argv[]) {
     data.gwnd = gtk_window_new(GTK_WINDOW_TOPLEVEL);
     OnChange(data.gwnd, 0, 0);
 
-    g_signal_connect(G_OBJECT(data.gwnd), "expose-event",
-                     G_CALLBACK(OnRedraw), &data.engc);
-    g_signal_connect(G_OBJECT(data.gwnd), "delete-event",
-                     G_CALLBACK(OnDestroy), &data.engc);
-    g_signal_connect(G_OBJECT(data.gwnd), "screen-changed",
-                     G_CALLBACK(OnChange), &data.engc);
-    g_signal_connect(G_OBJECT(data.gwnd), "configure-event",
-                     G_CALLBACK(OnResize), &data.engc);
-    g_signal_connect(G_OBJECT(data.gwnd), "key-press-event",
-                     G_CALLBACK(OnKeyPress), &data.engc);
-    g_signal_connect(G_OBJECT(data.gwnd), "key-release-event",
-                     G_CALLBACK(OnKeyPress), &data.engc);
-    g_signal_connect(G_OBJECT(data.gwnd), "button-press-event",
-                     G_CALLBACK(OnMousePress), &data.engc);
-    g_signal_connect(G_OBJECT(data.gwnd), "button-release-event",
-                     G_CALLBACK(OnMousePress), &data.engc);
-    g_signal_connect(G_OBJECT(data.gwnd), "motion-notify-event",
-                     G_CALLBACK(OnMouseMove), &data.engc);
+    for (tmru = 0; tmru < sizeof(func) / sizeof(*func); tmru += 2)
+        g_signal_connect(G_OBJECT(data.gwnd), (char*)func[tmru],
+                         G_CALLBACK(func[tmru + 1]), &data.engc);
     gtk_widget_set_events(data.gwnd, gtk_widget_get_events(data.gwnd)
                                    | GDK_POINTER_MOTION_MASK
                                    | GDK_BUTTON_RELEASE_MASK
@@ -209,4 +196,5 @@ int main(int argc, char *argv[]) {
     g_source_remove(tmrd);
     g_source_remove(tmru);
     gtk_widget_destroy(data.gwnd);
+    return 0;
 }

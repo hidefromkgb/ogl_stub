@@ -46,7 +46,7 @@ void MAC_Handler(OnDraw, CGRect rect) {
 }
 
 void MAC_Handler(OnKeys, NSEvent *ekey) {
-    static uint8_t keys[256] = { /** see the list of kVK_* for info **/
+    static const uint8_t keys[256] = { /** see the list of kVK_* for info **/
         KEY_A         , KEY_S         , KEY_D         , KEY_F         ,
         KEY_H         , KEY_G         , KEY_Z         , KEY_X         ,
         KEY_C         , KEY_V         , KEY_NONE      , KEY_B         ,
