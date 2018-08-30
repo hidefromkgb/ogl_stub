@@ -357,8 +357,9 @@ static struct {
 
 
 
-/// template for handler function prototypes
-#define MAC_Handler(func, ...) func(void *self, SEL name, ##__VA_ARGS__)
+/// template for handler function prototypes; names "self" and "_cmd" taken from ObjC docs:
+/// https://developer.apple.com/documentation/objectivec/1418901-class_addmethod?language=objc
+#define MAC_Handler(func, ...) func(void *self, SEL _cmd, ##__VA_ARGS__)
 
 
 
@@ -1682,6 +1683,47 @@ _MAC_F(0, "setDirectoryURL:", void,
            CFURLRef);
 #define    setDirectoryURL_(...) \
     _MAC_P(setDirectoryURL_, ##__VA_ARGS__)
+
+_MAC_F(0, "wantsBestResolutionOpenGLSurface", bool,
+           wantsBestResolutionOpenGLSurface);
+#define    wantsBestResolutionOpenGLSurface(...) \
+    _MAC_P(wantsBestResolutionOpenGLSurface, ##__VA_ARGS__)
+
+_MAC_F(2, "convertSizeToBacking:", CGSize,
+           convertSizeToBacking_,
+           CGSize);
+#define    convertSizeToBacking_(...) \
+    _MAC_P(convertSizeToBacking_, ##__VA_ARGS__)
+
+_MAC_F(2, "convertSizeFromBacking:", CGSize,
+           convertSizeFromBacking_,
+           CGSize);
+#define    convertSizeFromBacking_(...) \
+    _MAC_P(convertSizeFromBacking_, ##__VA_ARGS__)
+
+_MAC_F(2, "convertPointToBacking:", CGPoint,
+           convertPointToBacking_,
+           CGPoint);
+#define    convertPointToBacking_(...) \
+    _MAC_P(convertPointToBacking_, ##__VA_ARGS__)
+
+_MAC_F(2, "convertPointFromBacking:", CGPoint,
+           convertPointFromBacking_,
+           CGPoint);
+#define    convertPointFromBacking_(...) \
+    _MAC_P(convertPointFromBacking_, ##__VA_ARGS__)
+
+_MAC_F(4, "convertRectToBacking:", CGRect,
+           convertRectToBacking_,
+           CGRect);
+#define    convertRectToBacking_(...) \
+    _MAC_P(convertRectToBacking_, ##__VA_ARGS__)
+
+_MAC_F(4, "convertRectFromBacking:", CGRect,
+           convertRectFromBacking_,
+           CGRect);
+#define    convertRectFromBacking_(...) \
+    _MAC_P(convertRectFromBacking_, ##__VA_ARGS__)
 
 #undef _MAC_L
 #undef _MAC_L4
