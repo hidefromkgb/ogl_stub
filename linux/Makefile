@@ -31,4 +31,4 @@ $(OBJDIR)/core.o: ../core/core.c
 	$(CC) $(CFLAGS) -c ../core/core.c -o $(OBJDIR)/core.o
 $(OBJDIR)/main.o: main.c
 	$(CC) $(CFLAGS) -c main.c -o $(OBJDIR)/main.o
-	$(CX) $(CXFLAGS) $(OBJ) -o $(EXE)
+	$(CX) $(OBJ) $(CXFLAGS) -o $(EXE)
