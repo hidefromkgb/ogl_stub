@@ -24,7 +24,7 @@ bool MAC_Handler(OnFalse) {
 }
 
 bool MAC_Handler(OnClose) {
-    stop_(sharedApplication(NSApplication()), self);
+    stop_(sharedApplication(_(NSApplication)), self);
     return true;
 }
 
@@ -100,8 +100,8 @@ void OnUpdate(CFRunLoopTimerRef tmrp, void *user) {
     if (isKeyWindow(data->mwnd)) {
         wdim = frame(data->mwnd);
         vdim = frame(data->view);
-        mptr = mouseLocation(NSEvent());
-        pbtn = pressedMouseButtons(NSEvent());
+        mptr = mouseLocation(_(NSEvent));
+        pbtn = pressedMouseButtons(_(NSEvent));
         mptr.x -= wdim.origin.x + vdim.origin.x;
         mptr.y -= wdim.origin.y + vdim.origin.y;
         mptr.y = vdim.size.height - mptr.y;
@@ -138,36 +138,36 @@ int main(int argc, char *argv[]) {
 
     DATA data = {};
 
-    pool = init(alloc(NSAutoreleasePool()));
-    thrd = sharedApplication(NSApplication());
+    pool = init(alloc(_(NSAutoreleasePool)));
+    thrd = sharedApplication(_(NSApplication));
     setActivationPolicy_(thrd, NSApplicationActivationPolicyAccessory);
 
     size = (CGSize){800, 600};
-    dims = visibleFrame(mainScreen(NSScreen()));
+    dims = visibleFrame(mainScreen(_(NSScreen)));
     dims = (CGRect){{dims.origin.x + (dims.size.width - size.width) * 0.5,
                      dims.origin.y + (dims.size.height - size.height) * 0.5},
                      size};
 
-    vogl = MAC_MakeClass("NSO", NSOpenGLView(), MAC_TempArray(VAR_ENGC),
-                         MAC_TempArray(drawRect_(), OnDraw,
-                                       windowDidResize_(), OnSize,
-                                       windowShouldClose_(), OnClose,
-                                       keyDown_(), OnKeys, keyUp_(), OnKeys,
-                                       acceptsFirstResponder(), OnTrue,
-    /** works even on OSX 10.6 (as **/ wantsBestResolutionOpenGLSurface(),
-    /** this is just a hash entry) **/ OnTrue));
+    vogl = MAC_MakeClass("NSO", _(NSOpenGLView), MAC_TempArray(VAR_ENGC),
+                         MAC_TempArray(_(drawRect_), OnDraw,
+                                       _(windowDidResize_), OnSize,
+                                       _(windowShouldClose_), OnClose,
+                                       _(keyDown_), OnKeys, _(keyUp_), OnKeys,
+                                       _(acceptsFirstResponder), OnTrue,
+                                       _(wantsBestResolutionOpenGLSurface),
+                                       OnTrue));
 
-    pfmt = initWithAttributes_(alloc(NSOpenGLPixelFormat()), attr);
+    pfmt = initWithAttributes_(alloc(_(NSOpenGLPixelFormat)), attr);
     data.view = (NSView*)initWithFrame_pixelFormat_(alloc(vogl), dims, pfmt);
     makeCurrentContext(openGLContext(data.view));
     release(pfmt);
 
     MAC_SetIvar(data.view, VAR_ENGC, data.engc = cMakeEngine());
     data.mwnd = initWithContentRect_styleMask_backing_defer_
-                    (alloc(NSWindow()), dims, NSTitledWindowMask
-                                            | NSClosableWindowMask
-                                            | NSResizableWindowMask
-                                            | NSMiniaturizableWindowMask,
+                    (alloc(_(NSWindow)), dims, NSTitledWindowMask
+                                             | NSClosableWindowMask
+                                             | NSResizableWindowMask
+                                             | NSMiniaturizableWindowMask,
                      kCGBackingStoreBuffered, false);
     setContentView_(data.mwnd, data.view);
     setDelegate_(data.mwnd, data.view);
